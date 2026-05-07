@@ -1790,10 +1790,10 @@
         const bestSoFarEl = document.getElementById('bestSoFar');
         const targetScoreEl = document.getElementById('targetScore');
         const modeLabelEl = document.getElementById('modeLabel');
-        const fitPanel = document.getElementById('fitPanel');
-        const fitNameEl = document.getElementById('fitName');
-        const fitDescriptionEl = document.getElementById('fitDescription');
-        const fitItemsEl = document.getElementById('fitItems');
+        const fitPanel = null;
+        const fitNameEl = null;
+        const fitDescriptionEl = null;
+        const fitItemsEl = null;
         const shotToastEl = document.getElementById('shotToast');
         const distanceEl = document.getElementById('distance');
         const messageEl = document.getElementById('message');
@@ -2323,10 +2323,13 @@
             modeLabelEl.textContent = challenge.shortName;
             rewardsButton.textContent = 'Clubhouse Perk';
             rewardsButton.hidden = rewardState.rewardsWon.length === 0 && !dailyRun.completed;
-            fitNameEl.textContent = featuredFit.name;
-            fitDescriptionEl.textContent = `Beat the target to unlock a perk on this hole's fit. ${featuredFit.description}`;
-            fitItemsEl.innerHTML = featuredFit.items.map((item) => `<span>${escapeHTML(item.name || item)}</span>`).join('');
-        }
+            if (fitNameEl && fitDescriptionEl && fitItemsEl) {
+    fitNameEl.textContent = featuredFit.name;
+    fitDescriptionEl.textContent = featuredFit.description;
+    fitItemsEl.innerHTML = featuredFit.items
+        .map(item => `<span>${item}</span>`)
+        .join('');
+}
 
         function applyAspectMode(index) {
             aspectModeIndex = index % aspectModes.length;
