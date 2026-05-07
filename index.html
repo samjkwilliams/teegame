@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Tee Game Hero</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,22 +13,30 @@
         }
 
         :root {
-            --glass: rgba(8, 18, 12, 0.72);
-            --glass-soft: rgba(8, 18, 12, 0.42);
-            --line: rgba(255, 255, 255, 0.18);
-            --lime: #a7ff6d;
-            --gold: #ffd66b;
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --ink: #111822;
+            --ink-soft: #1b2633;
+            --steel: #344456;
+            --glass: rgba(24, 34, 47, 0.82);
+            --glass-soft: rgba(28, 41, 56, 0.58);
+            --line: rgba(255, 255, 255, 0.12);
+            --lime: #879f85;
+            --gold: #d8c2a1;
+            --clay: #9f6e61;
+            --sage: #7f9282;
             --white: #ffffff;
-            --muted: rgba(255, 255, 255, 0.72);
+            --cream: #f1ede4;
+            --muted: rgba(241, 237, 228, 0.72);
         }
         
         body {
             overflow: hidden;
-            font-family: 'Orbitron', sans-serif;
+            font-family: var(--font-body);
             touch-action: none;
             user-select: none;
             -webkit-user-select: none;
-            background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.08), transparent 30%), #0b120d;
+            background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.08), transparent 30%), var(--ink);
         }
 
         #gameShell {
@@ -39,7 +47,7 @@
             height: 100vh;
             transform: translate(-50%, -50%);
             overflow: hidden;
-            background: #0b120d;
+            background: var(--ink);
         }
 
         body.device-frame #gameShell {
@@ -59,9 +67,9 @@
             border-radius: 999px;
             padding: 0 14px;
             color: var(--white);
-            background: rgba(8, 18, 12, 0.78);
+            background: rgba(17, 24, 34, 0.84);
             backdrop-filter: blur(10px);
-            font-family: inherit;
+            font-family: var(--font-display);
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 1px;
@@ -81,11 +89,12 @@
             padding: 0 10px;
             border-radius: 999px;
             color: rgba(255,255,255,0.76);
-            background: rgba(8, 18, 12, 0.58);
+            background: rgba(17, 24, 34, 0.68);
             border: 1px solid rgba(255,255,255,0.1);
             font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
+            font-family: var(--font-display);
         }
         
         #gameCanvas {
@@ -139,17 +148,19 @@
         }
         
         .ui-box {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            background: rgba(25, 35, 48, 0.58);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 16px;
             padding: 12px 24px;
+            box-shadow: 0 16px 34px rgba(0, 0, 0, 0.16);
         }
         
         #score {
-            color: #fff;
+            color: var(--cream);
             font-size: 28px;
             font-weight: 700;
+            font-family: var(--font-display);
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
@@ -164,9 +175,10 @@
         }
         
         #level {
-            color: #90EE90;
+            color: #c7d8b8;
             font-size: 20px;
             font-weight: 400;
+            font-family: var(--font-display);
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
@@ -174,11 +186,12 @@
             position: absolute;
             top: 110px;
             right: 30px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            font-weight: 400;
+            color: rgba(241, 237, 228, 0.84);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-display);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.2px;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             pointer-events: none;
             z-index: 10;
@@ -189,9 +202,10 @@
             top: 44%;
             left: 50%;
             transform: translateX(-50%);
-            color: #fff;
+            color: var(--cream);
             font-size: 56px;
             font-weight: 900;
+            font-family: var(--font-display);
             text-align: center;
             pointer-events: none;
             opacity: 0;
@@ -212,10 +226,12 @@
 
         #distance span {
             display: block;
-            font-size: 16px;
-            font-weight: 400;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font-body);
             opacity: 0.8;
-            margin-top: 5px;
+            margin-top: 8px;
+            letter-spacing: 0.01em;
         }
         
         #message {
@@ -243,10 +259,11 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            font-weight: 400;
-            letter-spacing: 2px;
+            color: rgba(241, 237, 228, 0.76);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: var(--font-display);
+            letter-spacing: 1.1px;
             text-transform: uppercase;
             pointer-events: none;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -258,13 +275,13 @@
             bottom: calc(18px + env(safe-area-inset-bottom));
             z-index: 16;
             pointer-events: auto;
-            border: 1px solid rgba(255, 214, 107, 0.36);
+            border: 1px solid rgba(216, 194, 161, 0.3);
             border-radius: 999px;
             padding: 10px 16px;
-            color: var(--white);
-            background: rgba(8, 18, 12, 0.48);
+            color: var(--cream);
+            background: rgba(21, 31, 43, 0.68);
             backdrop-filter: blur(12px);
-            font-family: inherit;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -279,8 +296,8 @@
             z-index: 14;
             pointer-events: none;
             color: var(--white);
-            background: rgba(8, 18, 12, 0.58);
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(24, 34, 47, 0.62);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 18px;
             box-shadow: 0 18px 46px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(14px);
@@ -297,6 +314,7 @@
             color: var(--gold);
             font-size: 11px;
             font-weight: 900;
+            font-family: var(--font-display);
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 7px;
@@ -305,19 +323,20 @@
         .challenge-panel h1,
         .fit-panel h2 {
             margin: 0 0 7px;
-            color: var(--white);
+            color: var(--cream);
             font-size: 20px;
             line-height: 1;
+            font-family: var(--font-display);
             text-transform: uppercase;
         }
 
         .challenge-panel p,
         .fit-panel p {
             margin: 0;
-            color: rgba(255, 255, 255, 0.74);
-            font-family: sans-serif;
+            color: var(--muted);
+            font-family: var(--font-body);
             font-size: 13px;
-            line-height: 1.35;
+            line-height: 1.45;
         }
 
         .challenge-stats {
@@ -331,25 +350,27 @@
             min-width: 0;
             padding: 9px 8px;
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .stat-chip span {
             display: block;
-            color: rgba(255, 255, 255, 0.58);
-            font-family: sans-serif;
+            color: rgba(241, 237, 228, 0.54);
+            font-family: var(--font-body);
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .stat-chip strong {
             display: block;
             margin-top: 4px;
             overflow-wrap: anywhere;
-            color: var(--white);
+            color: var(--cream);
             font-size: 13px;
+            font-family: var(--font-display);
             line-height: 1.05;
         }
 
@@ -373,11 +394,12 @@
             min-height: 26px;
             padding: 0 9px;
             border-radius: 999px;
-            color: #071007;
-            background: rgba(255, 255, 255, 0.82);
-            font-family: sans-serif;
+            color: var(--cream);
+            background: rgba(255, 255, 255, 0.1);
+            font-family: var(--font-body);
             font-size: 12px;
             font-weight: 800;
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
         .shot-toast {
@@ -404,20 +426,22 @@
             color: var(--gold);
             font-size: 12px;
             font-weight: 900;
+            font-family: var(--font-display);
             text-transform: uppercase;
         }
 
         .shot-toast-score {
-            color: var(--white);
+            color: var(--cream);
             font-size: 30px;
             font-weight: 900;
+            font-family: var(--font-display);
             line-height: 1;
         }
 
         .shot-toast p {
             margin: 6px 0 0;
-            color: rgba(255, 255, 255, 0.76);
-            font-family: sans-serif;
+            color: var(--muted);
+            font-family: var(--font-body);
             font-size: 14px;
             line-height: 1.35;
         }
@@ -435,15 +459,16 @@
             padding: 18px;
             border-radius: 18px;
             background:
-                linear-gradient(135deg, rgba(255, 214, 107, 0.13), transparent 36%),
-                rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.14);
+                linear-gradient(135deg, rgba(216, 194, 161, 0.12), transparent 38%),
+                rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .share-card .big-result {
             color: var(--gold);
             font-size: clamp(30px, 8vw, 52px);
             font-weight: 900;
+            font-family: var(--font-display);
             line-height: 0.95;
             text-transform: uppercase;
         }
@@ -468,9 +493,10 @@
         }
 
         .share-card .score-callout strong {
-            color: var(--white);
+            color: var(--cream);
             font-size: clamp(22px, 5vw, 38px);
             font-weight: 900;
+            font-family: var(--font-display);
         }
 
         .share-card dl {
@@ -481,8 +507,8 @@
         }
 
         .share-card dt {
-            color: rgba(255, 255, 255, 0.55);
-            font-family: sans-serif;
+            color: rgba(241, 237, 228, 0.52);
+            font-family: var(--font-body);
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
@@ -490,20 +516,21 @@
 
         .share-card dd {
             margin: 4px 0 0;
-            color: var(--white);
+            color: var(--cream);
             font-size: 14px;
             font-weight: 900;
+            font-family: var(--font-display);
         }
 
         .vote-option {
             min-height: 46px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px;
             padding: 0 14px;
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.08);
-            font-family: inherit;
-            font-size: 13px;
+            color: var(--cream);
+            background: rgba(255, 255, 255, 0.06);
+            font-family: var(--font-display);
+            font-size: 12px;
             font-weight: 900;
             text-transform: uppercase;
             cursor: pointer;
@@ -517,8 +544,8 @@
             display: grid;
             place-items: center;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.34);
-            backdrop-filter: blur(6px);
+            background: rgba(13, 18, 27, 0.52);
+            backdrop-filter: blur(8px);
         }
 
         .modal-backdrop[hidden] {
@@ -531,8 +558,8 @@
             overflow: auto;
             color: var(--white);
             background:
-                radial-gradient(circle at 18% 10%, rgba(167, 255, 109, 0.18), transparent 34%),
-                linear-gradient(145deg, rgba(12, 30, 19, 0.94), rgba(4, 12, 8, 0.94));
+                radial-gradient(circle at 18% 10%, rgba(216, 194, 161, 0.14), transparent 34%),
+                linear-gradient(145deg, rgba(20, 29, 40, 0.97), rgba(13, 19, 27, 0.98));
             border: 1px solid var(--line);
             border-radius: 22px;
             box-shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
@@ -552,12 +579,13 @@
             font-size: clamp(24px, 4vw, 36px);
             line-height: 1;
             margin-bottom: 12px;
-            color: var(--white);
+            color: var(--cream);
+            font-family: var(--font-display);
         }
 
         .reward-modal p {
             color: var(--muted);
-            font-family: sans-serif;
+            font-family: var(--font-body);
             font-size: 15px;
             line-height: 1.45;
             margin-bottom: 16px;
@@ -570,21 +598,21 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 14px;
             padding: 0 14px;
-            color: var(--white);
+            color: var(--cream);
             background: rgba(255, 255, 255, 0.08);
-            font: 700 15px sans-serif;
+            font: 700 15px var(--font-body);
             outline: none;
         }
 
         .reward-input:focus {
-            border-color: rgba(167, 255, 109, 0.62);
-            box-shadow: 0 0 0 3px rgba(167, 255, 109, 0.12);
+            border-color: rgba(216, 194, 161, 0.52);
+            box-shadow: 0 0 0 3px rgba(216, 194, 161, 0.12);
         }
 
         .reward-error {
             min-height: 18px;
-            color: #ff9a9a;
-            font-family: sans-serif;
+            color: #d8a09c;
+            font-family: var(--font-body);
             font-size: 13px;
             margin-bottom: 10px;
         }
@@ -624,9 +652,9 @@
             overflow: hidden;
             color: var(--white);
             background:
-                radial-gradient(circle at top right, rgba(255, 214, 107, 0.2), transparent 28%),
-                linear-gradient(145deg, rgba(12, 30, 19, 0.86), rgba(4, 12, 8, 0.9));
-            border: 1px solid rgba(255, 255, 255, 0.14);
+                radial-gradient(circle at top right, rgba(216, 194, 161, 0.18), transparent 28%),
+                linear-gradient(145deg, rgba(27, 38, 51, 0.9), rgba(16, 24, 34, 0.94));
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 22px;
             box-shadow: 0 26px 60px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(14px);
@@ -638,7 +666,7 @@
             position: absolute;
             inset: auto 0 0 0;
             height: 3px;
-            background: linear-gradient(90deg, rgba(167, 255, 109, 0.95), rgba(255, 214, 107, 0.95));
+            background: linear-gradient(90deg, rgba(127, 146, 130, 0.95), rgba(216, 194, 161, 0.95));
             opacity: 0.9;
         }
 
@@ -659,9 +687,10 @@
         }
 
         .hole-intro-weather {
-            color: rgba(255, 255, 255, 0.82);
+            color: rgba(241, 237, 228, 0.82);
             font-size: 12px;
             font-weight: 800;
+            font-family: var(--font-display);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -669,14 +698,15 @@
         .hole-intro-title {
             margin: 0 0 8px;
             font-size: clamp(24px, 4vw, 34px);
+            font-family: var(--font-display);
             line-height: 0.95;
             text-transform: uppercase;
         }
 
         .hole-intro-copy {
             margin: 0;
-            color: rgba(255, 255, 255, 0.82);
-            font-family: sans-serif;
+            color: var(--muted);
+            font-family: var(--font-body);
             font-size: 15px;
             line-height: 1.4;
         }
@@ -694,11 +724,12 @@
             min-height: 28px;
             padding: 0 10px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(241, 237, 228, 0.88);
             font-size: 11px;
             font-weight: 800;
+            font-family: var(--font-display);
             letter-spacing: 0.8px;
             text-transform: uppercase;
         }
@@ -725,15 +756,15 @@
             border-radius: 16px;
             text-decoration: none;
             color: var(--white);
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
             transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
         }
 
         .hole-intro-product:hover {
             transform: translateY(-1px);
-            border-color: rgba(255, 214, 107, 0.36);
+            border-color: rgba(216, 194, 161, 0.34);
             background: rgba(255, 255, 255, 0.1);
         }
 
@@ -753,23 +784,25 @@
         }
 
         .hole-intro-product-kicker {
-            color: rgba(255, 255, 255, 0.62);
+            color: rgba(241, 237, 228, 0.58);
             font-size: 10px;
             font-weight: 800;
+            font-family: var(--font-body);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .hole-intro-product-title {
-            color: var(--white);
+            color: var(--cream);
             font-size: 12px;
             font-weight: 900;
+            font-family: var(--font-display);
             line-height: 1.05;
         }
 
         .hole-intro-product-sub {
-            color: rgba(255, 255, 255, 0.78);
-            font-family: sans-serif;
+            color: var(--muted);
+            font-family: var(--font-body);
             font-size: 11px;
             line-height: 1.25;
         }
@@ -779,7 +812,7 @@
             border: 0;
             border-radius: 999px;
             padding: 0 16px;
-            font-family: inherit;
+            font-family: var(--font-display);
             font-size: 12px;
             font-weight: 900;
             text-transform: uppercase;
@@ -787,14 +820,14 @@
         }
 
         .hole-intro-button.primary {
-            color: #071007;
-            background: linear-gradient(135deg, var(--lime), var(--gold));
+            color: var(--ink);
+            background: linear-gradient(135deg, var(--gold), #efe2cf);
         }
 
         .hole-intro-button.secondary {
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--cream);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .reward-action {
@@ -802,9 +835,9 @@
             border: 0;
             border-radius: 999px;
             padding: 0 18px;
-            color: #071007;
-            background: linear-gradient(135deg, var(--lime), var(--gold));
-            font-family: inherit;
+            color: var(--ink);
+            background: linear-gradient(135deg, var(--gold), #efe2cf);
+            font-family: var(--font-display);
             font-size: 13px;
             font-weight: 900;
             text-transform: uppercase;
@@ -812,9 +845,9 @@
         }
 
         .reward-action.secondary {
-            color: var(--white);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--cream);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .reward-action:disabled {
@@ -824,8 +857,8 @@
 
         .trust-copy {
             margin-top: 12px;
-            color: rgba(255, 255, 255, 0.58);
-            font-family: sans-serif;
+            color: rgba(241, 237, 228, 0.58);
+            font-family: var(--font-body);
             font-size: 12px;
             line-height: 1.4;
         }
@@ -1857,6 +1890,7 @@
         const weatherTypes = [
             { name: 'Sunny', icon: '☀️', sky: ['#87CEEB', '#4FA4D4'], ground: ['#228B22', '#1a6b1a'], grass: '#32CD32', light: 1 },
             { name: 'Rainy', icon: '🌧️', sky: ['#72879A', '#4A6275'], ground: ['#1E5631', '#123524'], grass: '#2fbf71', light: 0.72 },
+            { name: 'Snowy', icon: '❄️', sky: ['#e6edf4', '#c4d1dd'], ground: ['#f5f7fa', '#dfe6ee'], grass: '#f7fafc', light: 0.98 },
             { name: 'Cloudy', icon: '☁️', sky: ['#A8B5C4', '#7A8A9A'], ground: ['#2E7D32', '#1b5e20'], grass: '#4CAF50', light: 0.85 },
             { name: 'Overcast', icon: '🌥️', sky: ['#6B7B8C', '#4A5568'], ground: ['#1B5E20', '#145214'], grass: '#388E3C', light: 0.7 },
             { name: 'Sunset', icon: '🌅', sky: ['#FF7E5F', '#FEB47B'], ground: ['#1E5631', '#143620'], grass: '#4CAF50', light: 0.9 },
@@ -1927,6 +1961,13 @@
                 copy: 'Twilight track. Hoodie energy and one pure strike.',
                 category: 'Outerwear',
                 cta: 'See Hoodies',
+                url: SHOP_URL
+            },
+            Snowy: {
+                title: 'Snow Layer Required',
+                copy: 'White-out conditions. Bundle up and flight it properly.',
+                category: 'Outerwear',
+                cta: 'See Winter Layers',
                 url: SHOP_URL
             }
         };
@@ -2019,7 +2060,7 @@
                 url: 'https://teegame.com.au/products/primo-golf-hoodie-light-grey',
                 blurb: 'Clubhouse menace uniform.',
                 role: 'layer',
-                weather: ['Dusk', 'Rainy', 'Sunset']
+                weather: ['Dusk', 'Rainy', 'Sunset', 'Snowy']
             },
             {
                 id: 'primo-jogger-grey',
@@ -2029,7 +2070,7 @@
                 url: 'https://teegame.com.au/products/primo-signature-golf-jogger-light-grey',
                 blurb: 'Cool conditions, easy movement.',
                 role: 'bottom',
-                weather: ['Cloudy', 'Overcast', 'Rainy']
+                weather: ['Cloudy', 'Overcast', 'Rainy', 'Snowy']
             },
             {
                 id: 'primo-jogger-slate',
@@ -2039,7 +2080,7 @@
                 url: 'https://teegame.com.au/products/primo-signature-golf-jogger-slate-blue',
                 blurb: 'Twilight-ready legwear.',
                 role: 'bottom',
-                weather: ['Overcast', 'Dusk', 'Sunset']
+                weather: ['Overcast', 'Dusk', 'Sunset', 'Snowy']
             },
             {
                 id: 'primo-shorts-navy',
@@ -2091,6 +2132,11 @@
             Dusk: {
                 title: 'Last-Light Layer',
                 description: 'When the shadows hit, you want one good layer and two easy pieces around it.',
+                roles: ['hat', 'layer', 'bottom']
+            },
+            Snowy: {
+                title: 'Whiteout Winter Kit',
+                description: 'Snow-hole setup: proper layering, grounded tones, and gear that looks sharp in the cold.',
                 roles: ['hat', 'layer', 'bottom']
             }
         };
@@ -2839,6 +2885,23 @@
             screenShake.endTime = performance.now() + duration;
         }
 
+        function spawnImpactBurst(x, y, speed, snowy = false) {
+            const colorA = snowy ? 'rgba(245, 247, 250, 0.96)' : weather.grass;
+            const colorB = snowy ? 'rgba(221, 229, 238, 0.86)' : 'rgba(255,255,255,0.22)';
+            const burstCount = Math.min(16, 6 + Math.round(speed * 1.3));
+            for (let i = 0; i < burstCount; i++) {
+                particles.push({
+                    x,
+                    y,
+                    vx: (Math.random() - 0.5) * (2 + speed * 0.7),
+                    vy: -Math.random() * (1.6 + speed * 0.35),
+                    life: 0.8 + Math.random() * 0.55,
+                    type: 'bounce',
+                    color: i % 2 === 0 ? colorA : colorB
+                });
+            }
+        }
+
         function updateScreenShake(now) {
             if (now >= screenShake.endTime) {
                 screenShake.x = 0;
@@ -3295,6 +3358,7 @@
                         });
                     }
                 }
+
             }
 
             if (ball.x < 0 || ball.y > camera.y + H / cameraZoom + 220 || ball.x > courseMaxX) {
@@ -3449,7 +3513,20 @@
         }
 
         function spawnWeatherParticles() {
-            if (weather.name === 'Rainy') {
+            if (weather.name === 'Snowy') {
+                if (Math.random() < 0.45) {
+                    const screenX = camera.x + Math.random() * W / cameraZoom;
+                    particles.push({
+                        x: screenX,
+                        y: camera.y - 40,
+                        vx: (Math.random() - 0.5) * 0.6,
+                        vy: 1.2 + Math.random() * 0.7,
+                        life: 4.2,
+                        type: 'snow',
+                        color: 'rgba(255, 255, 255, 0.88)'
+                    });
+                }
+            } else if (weather.name === 'Rainy') {
                 if (Math.random() < 0.75) {
                     const screenX = camera.x + Math.random() * W / cameraZoom;
                     particles.push({
@@ -3522,7 +3599,7 @@
         }
 
         function spawnCelebration(x, y, count = 50) {
-            const colors = ['#FFD700', '#FF6B6b', '#4CAF50', '#2196F3', '#FF9800'];
+                const colors = ['#d8c2a1', '#b78579', '#879f85', '#768ba3', '#c39b74'];
             for (let i = 0; i < count; i++) {
                 particles.push({
                     x,
@@ -3939,73 +4016,6 @@
                     ctx.arc(x, y, 20 + Math.sin(x * 0.1) * 5, 0, Math.PI * 2);
                     ctx.fill();
                 }
-            }
-
-            if (targetZone && dailyRun?.challengeType === 'fairway_finder') {
-                const zoneStart = targetZone.x;
-                const zoneEnd = targetZone.x + targetZone.width;
-                ctx.save();
-                ctx.beginPath();
-                for (let x = zoneStart; x <= zoneEnd; x += 18) {
-                    const y = getTerrainY(x) + 2;
-                    if (x === zoneStart) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.lineWidth = 18;
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = 'rgba(255, 214, 107, 0.34)';
-                ctx.stroke();
-                ctx.lineWidth = 3;
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.68)';
-                ctx.setLineDash([14, 10]);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                ctx.fillStyle = 'rgba(7, 16, 7, 0.72)';
-                ctx.strokeStyle = 'rgba(255, 214, 107, 0.4)';
-                ctx.lineWidth = 1;
-                const labelX = zoneStart + targetZone.width * 0.5;
-                const labelY = getTerrainY(labelX) - 38;
-                ctx.beginPath();
-                ctx.roundRect(labelX - 70, labelY - 18, 140, 32, 16);
-                ctx.fill();
-                ctx.stroke();
-                ctx.fillStyle = '#ffd66b';
-                ctx.font = `900 ${13 / cameraZoom}px Orbitron`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('LANDING ZONE', labelX, labelY - 2);
-                ctx.restore();
-            }
-
-            if (landingWindow) {
-                const zoneStart = landingWindow.x;
-                const zoneEnd = landingWindow.x + landingWindow.width;
-                ctx.save();
-                ctx.beginPath();
-                for (let x = zoneStart; x <= zoneEnd; x += 10) {
-                    const y = getTerrainY(x) + 1;
-                    if (x === zoneStart) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.lineWidth = 16;
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = landingWindow.tint;
-                ctx.stroke();
-                const centerX = getLandingWindowCenter();
-                const centerY = getTerrainY(centerX) - 30;
-                ctx.fillStyle = 'rgba(7, 16, 7, 0.76)';
-                ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.roundRect(centerX - 72, centerY - 15, 144, 28, 14);
-                ctx.fill();
-                ctx.stroke();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = `900 ${11 / cameraZoom}px Orbitron`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(landingWindow.label, centerX, centerY - 1);
-                ctx.restore();
             }
 
             if (runwayZone) {
