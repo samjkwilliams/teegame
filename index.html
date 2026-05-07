@@ -1755,6 +1755,11 @@
                 <div class="stat-chip"><span>Mode</span><strong id="modeLabel">Daily Drive</strong></div>
             </div>
         </div>
+        <div id="fitPanel" class="fit-panel">
+            <div class="panel-kicker">Today's Fit</div>
+            <h2 id="fitName">The Sunday Operator</h2>
+            <p id="fitDescription">Beat the target to unlock a perk on today's fit.</p>
+            <div id="fitItems" class="fit-items"></div>
         </div>
         <div id="shotToast" class="shot-toast" aria-live="polite"></div>
         <div id="distance">250m<span>to hole</span></div>
@@ -1790,10 +1795,10 @@
         const bestSoFarEl = document.getElementById('bestSoFar');
         const targetScoreEl = document.getElementById('targetScore');
         const modeLabelEl = document.getElementById('modeLabel');
-        const fitPanel = null;
-        const fitNameEl = null;
-        const fitDescriptionEl = null;
-        const fitItemsEl = null;
+        const fitPanel = document.getElementById('fitPanel');
+        const fitNameEl = document.getElementById('fitName');
+        const fitDescriptionEl = document.getElementById('fitDescription');
+        const fitItemsEl = document.getElementById('fitItems');
         const shotToastEl = document.getElementById('shotToast');
         const distanceEl = document.getElementById('distance');
         const messageEl = document.getElementById('message');
@@ -2323,13 +2328,10 @@
             modeLabelEl.textContent = challenge.shortName;
             rewardsButton.textContent = 'Clubhouse Perk';
             rewardsButton.hidden = rewardState.rewardsWon.length === 0 && !dailyRun.completed;
-            if (fitNameEl && fitDescriptionEl && fitItemsEl) {
-    fitNameEl.textContent = featuredFit.name;
-    fitDescriptionEl.textContent = featuredFit.description;
-    fitItemsEl.innerHTML = featuredFit.items
-        .map(item => `<span>${item}</span>`)
-        .join('');
-}
+            fitNameEl.textContent = featuredFit.name;
+            fitDescriptionEl.textContent = `Beat the target to unlock a perk on this hole's fit. ${featuredFit.description}`;
+            fitItemsEl.innerHTML = featuredFit.items.map((item) => `<span>${escapeHTML(item.name || item)}</span>`).join('');
+        }
 
         function applyAspectMode(index) {
             aspectModeIndex = index % aspectModes.length;
