@@ -90,8 +90,10 @@ class SkySystem {
     this.setPreset(preset);
     this.time = nowSeconds || 0;
 
-    const cadence = this.quality === "enhanced" ? 1 / 24 : 1 / 18;
-    if (!this.dirty && this.lastRenderTime >= 0 && this.time - this.lastRenderTime < cadence) {
+    // Performance mode: the sky is now rendered only when the hole/preset or
+    // canvas size changes. This removes the constant 18-24fps sky redraw that
+    // was costing smoothness in Chrome, while preserving the painted sky look.
+    if (!this.dirty && this.lastRenderTime >= 0) {
       return true;
     }
 
@@ -174,8 +176,8 @@ class SkySystem {
 
   getCloudLayer(preset) {
     if (!this.cloudLayerCtx || !this.cloudMaskCtx) return null;
-    const layerWidth = Math.max(520, Math.min(1320, Math.round(this.width * 1.34)));
-    const layerHeight = Math.max(220, Math.min(560, Math.round(this.height * 0.72)));
+    const layerWidth = Math.max(360, Math.min(760, Math.round(this.width * 1.05)));
+    const layerHeight = Math.max(160, Math.min(360, Math.round(this.height * 0.58)));
     const cacheKey = [
       preset.key,
       layerWidth,

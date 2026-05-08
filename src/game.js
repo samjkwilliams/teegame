@@ -9,7 +9,7 @@
   const holeNextButton = document.querySelector("[data-hole-next]");
   const holeCounter = document.querySelector("[data-hole-counter]");
   const BALL_SPRITE_SRC = `golfball`;
-  const TERRAIN_OVERLAY_SRC = `overlay`;
+  const TERRAIN_OVERLAY_SRC = `overlay.webp`;
   const SKY_QUALITY = window.TEE_SKY_QUALITY || "auto";
 
   const BALL = {
@@ -32,8 +32,8 @@
   };
 
   const GRAVITY = 9.81;
-  const FIXED_DT = 1 / 180;
-  const MAX_GUIDE_STEPS = 720;
+  const FIXED_DT = 1 / 120;
+  const MAX_GUIDE_STEPS = 240;
   const MIN_LAUNCH_ANGLE = -0.05;
   const MAX_LAUNCH_ANGLE = 0.84;
   const PUTT_DISTANCE = 34;
@@ -47,6 +47,9 @@
   const FORCE_SETTLE_SECONDS = 0.78;
   const COURSE_PAR = 3;
   const HOLE_SPINNER_DELAY = 2.85;
+  const MAX_PHYSICS_STEPS_PER_FRAME = 5;
+  const LOW_POWER_RENDER = true;
+  const MINIMAP_REFRESH_SECONDS = 1 / 12;
   const pts = (rows) => rows.map(([x, y]) => ({ x, y }));
   const HOLES = [
     {
@@ -616,6 +619,10 @@
   let accumulator = 0;
   let lastTime = performance.now();
   let shotPreview = null;
+  let guideCache = { x: Number.NaN, y: Number.NaN, ballX: Number.NaN, ballY: Number.NaN, time: 0 };
+  let terrainOverlayPattern = null;
+  let minimapCache = null;
+  let terrainSurfaceCache = null;
   let resizeQueued = true;
   let strikeClock = 0;
   let wheel = createWheelState();
@@ -1344,6 +1351,9 @@
     pointer = null;
     shotPreview = null;
     guide.length = 0;
+    invalidateGuideCache();
+    invalidateMinimapCache();
+    invalidateTerrainSurfaceCache();
     strikeClock = 0;
     accumulator = 0;
     wheel = createWheelState();
@@ -1378,6 +1388,7 @@
     world.slowTimer = 0;
     pointer = null;
     shotPreview = null;
+    invalidateGuideCache();
   }
 
   function computeLaunchFromDrag(options = {}) {
@@ -1443,12 +1454,43 @@
     };
   }
 
-  function predictGuide() {
-    guide.length = 0;
-    if (!pointer || !world.ball.asleep || world.holed) return;
+  function invalidateGuideCache() {
+    guideCache.x = Number.NaN;
+    guideCache.y = Number.NaN;
+    guideCache.ballX = Number.NaN;
+    guideCache.ballY = Number.NaN;
+    guideCache.time = 0;
+  }
+
+  function invalidateMinimapCache() {
+    minimapCache = null;
+  }
+
+  function invalidateTerrainSurfaceCache() {
+    terrainSurfaceCache = null;
+  }
+
+  function predictGuide(now = performance.now()) {
+    if (!pointer || !world.ball.asleep || world.holed) {
+      guide.length = 0;
+      shotPreview = null;
+      invalidateGuideCache();
+      return;
+    }
+
     const liveStrike = strikeState();
+    const pointerMoved = Math.hypot(pointer.x - guideCache.x, pointer.y - guideCache.y);
+    const ballMoved = Math.hypot(world.ball.x - guideCache.ballX, world.ball.y - guideCache.ballY);
+    const cacheFresh = pointerMoved < 2.5 && ballMoved < 0.02 && now - guideCache.time < 90;
+    if (cacheFresh && shotPreview) {
+      shotPreview.strike = liveStrike;
+      return;
+    }
+
+    guide.length = 0;
     shotPreview = computeLaunchFromDrag({ useStrike: false });
     shotPreview.strike = liveStrike;
+    guideCache = { x: pointer.x, y: pointer.y, ballX: world.ball.x, ballY: world.ball.y, time: now };
     const ghost = {
       x: world.ball.x,
       y: world.ball.y,
@@ -1472,11 +1514,11 @@
       } else {
         stepGroundedGhost(ghost, 1 / 60);
       }
-      if (i % 4 === 0) {
+      if (i % 7 === 0) {
         guide.push({ x: ghost.x, y: ghost.y, grounded: ghost.grounded });
       }
       if (ghost.grounded && Math.abs(groundSpeed(ghost)) < 0.35) break;
-      if (bounces > 2 && i > 180) break;
+      if (bounces > 2 && i > 120) break;
       if (ghost.x < -70 || ghost.x > COURSE.endX + 65 || ghost.y < -20) break;
     }
   }
@@ -1683,13 +1725,31 @@
   }
 
   function drawTerrain(width, height) {
-    const start = view.x - 10;
-    const end = view.x + width / view.scale + 10;
-    const step = Math.max(0.7, 3.2 / view.scale);
+    const rawStart = view.x - 10;
+    const rawEnd = view.x + width / view.scale + 10;
+    const step = Math.max(1.05, 5.6 / view.scale);
+    const start = Math.floor(rawStart * 2) / 2;
+    const end = Math.ceil(rawEnd * 2) / 2;
+    const cacheKey = [
+      currentHoleIndex,
+      Math.round(width),
+      Math.round(height),
+      Math.round(view.x * 50) / 50,
+      Math.round(view.y * 50) / 50,
+      Math.round(view.scale * 100) / 100,
+      start,
+      end
+    ].join(":");
+    let terrainPoints = terrainSurfaceCache?.key === cacheKey ? terrainSurfaceCache.points : null;
+    if (!terrainPoints) {
+      terrainPoints = buildTerrainSurfacePoints(start, end, step);
+      terrainSurfaceCache = { key: cacheKey, points: terrainPoints };
+    }
+    if (terrainPoints.length < 2) return;
 
-    traceTerrainSurface(start, end, step);
-    const last = worldToScreen(end, terrainHeight(end));
-    const first = worldToScreen(start, terrainHeight(start));
+    traceTerrainSurfaceFromPoints(terrainPoints);
+    const last = terrainPoints[terrainPoints.length - 1];
+    const first = terrainPoints[0];
     ctx.lineTo(last.x, height + 40);
     ctx.lineTo(first.x, height + 40);
     ctx.closePath();
@@ -1699,37 +1759,44 @@
     land.addColorStop(1, COLORS.soil);
     ctx.fillStyle = land;
     ctx.fill();
-    drawTerrainOverlay(width, height, start, end, step);
+    drawTerrainOverlay(width, height, terrainPoints);
 
     ctx.save();
     ctx.shadowColor = COLORS.rim;
-    ctx.shadowBlur = Math.max(12, view.scale * 0.75);
+    ctx.shadowBlur = LOW_POWER_RENDER ? Math.max(4, view.scale * 0.18) : Math.max(10, view.scale * 0.55);
     ctx.lineWidth = Math.max(3, view.scale * 0.12);
     ctx.strokeStyle = COLORS.rim;
-    traceTerrainSurface(start, end, step);
+    traceTerrainSurfaceFromPoints(terrainPoints);
     ctx.stroke();
     ctx.restore();
 
     ctx.lineWidth = Math.max(1.2, view.scale * 0.035);
     ctx.strokeStyle = "rgb(255 248 220 / 0.32)";
-    traceTerrainSurface(start, end, step);
+    traceTerrainSurfaceFromPoints(terrainPoints);
     ctx.stroke();
   }
 
-  function drawTerrainOverlay(width, height, start, end, step) {
-    if (!assets.terrainOverlayReady) return;
-    const pattern = ctx.createPattern(assets.terrainOverlay, "repeat");
-    if (!pattern) return;
+  function getTerrainOverlayPattern() {
+    if (!assets.terrainOverlayReady) return null;
+    if (!terrainOverlayPattern) {
+      terrainOverlayPattern = ctx.createPattern(assets.terrainOverlay, "repeat");
+    }
+    return terrainOverlayPattern;
+  }
 
-    const tile = clamp(view.scale * 11.6, 172, 380); 
+  function drawTerrainOverlay(width, height, terrainPoints) {
+    const pattern = getTerrainOverlayPattern();
+    if (!pattern || terrainPoints.length < 2) return;
+
+    const tile = clamp(view.scale * 11.6, 172, 380);
     const scale = tile / assets.terrainOverlay.width;
     const offsetX = -((view.x * view.scale) % tile);
     const offsetY = ((view.y * view.scale) % tile);
 
     ctx.save();
-    traceTerrainSurface(start, end, step);
-    const last = worldToScreen(end, terrainHeight(end));
-    const first = worldToScreen(start, terrainHeight(start));
+    traceTerrainSurfaceFromPoints(terrainPoints);
+    const last = terrainPoints[terrainPoints.length - 1];
+    const first = terrainPoints[0];
     ctx.lineTo(last.x, height + 40);
     ctx.lineTo(first.x, height + 40);
     ctx.closePath();
@@ -1739,13 +1806,14 @@
       pattern.setTransform(new DOMMatrix([scale, 0, 0, scale, offsetX, offsetY]));
     }
 
+    const alpha = terrainOverlayAlpha();
     ctx.globalCompositeOperation = "overlay";
-    ctx.globalAlpha = terrainOverlayAlpha();
+    ctx.globalAlpha = alpha;
     ctx.fillStyle = pattern;
     ctx.fillRect(0, 0, width, height);
 
     ctx.globalCompositeOperation = "source-over";
-    ctx.globalAlpha = terrainOverlayAlpha() * 0.22;
+    ctx.globalAlpha = alpha * 0.22;
     ctx.fillRect(0, 0, width, height);
     ctx.restore();
   }
@@ -1759,11 +1827,22 @@
     return 0.773;
   }
 
-  function traceTerrainSurface(start, end, step) {
+  function buildTerrainSurfacePoints(start, end, step) {
     const points = [];
     for (let x = start; x <= end; x += step) {
-      points.push(worldToScreen(x, terrainHeight(x)));
+      points.push({ ...worldToScreen(x, terrainHeight(x)), worldX: x });
     }
+    if (!points.length || points[points.length - 1].worldX < end) {
+      points.push({ ...worldToScreen(end, terrainHeight(end)), worldX: end });
+    }
+    return points;
+  }
+
+  function traceTerrainSurface(start, end, step) {
+    traceTerrainSurfaceFromPoints(buildTerrainSurfacePoints(start, end, step));
+  }
+
+  function traceTerrainSurfaceFromPoints(points) {
     if (points.length < 2) return;
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -2008,30 +2087,56 @@
     const mapW = Math.min(width * (compact ? 0.58 : 0.28), compact ? 220 : 310);
     const mapH = Math.max(22, Math.min(height * 0.05, 36));
     const x0 = width * 0.5 - mapW * 0.5;
-    const y0 = Math.max(compact ? 48 : 62, height * 0.075);
+    const y0 = Math.max(compact ? 92 : 86, height * 0.105);
     const mapStart = Math.min(0, world.ball.x - 8);
     const mapEnd = Math.max(COURSE.endX + 8, world.ball.x + 8);
     const xScale = mapW / (mapEnd - mapStart);
     const minY = -9;
     const maxY = 10;
     const yScale = mapH / (maxY - minY);
+    const now = performance.now() / 1000;
+    const cacheKey = [
+      currentHoleIndex,
+      Math.round(mapW),
+      Math.round(mapH),
+      Math.round(mapStart * 2) / 2,
+      Math.round(mapEnd * 2) / 2
+    ].join(":");
+
+    if (!minimapCache || minimapCache.key !== cacheKey || now - minimapCache.time > MINIMAP_REFRESH_SECONDS) {
+      const terrain = [];
+      for (let x = mapStart; x <= mapEnd; x += 4.5) {
+        terrain.push({
+          x: x0 + (x - mapStart) * xScale,
+          y: y0 + mapH - (terrainHeight(x) - minY) * yScale
+        });
+      }
+      if (!terrain.length || terrain[terrain.length - 1].x < x0 + mapW) {
+        const x = mapEnd;
+        terrain.push({
+          x: x0 + mapW,
+          y: y0 + mapH - (terrainHeight(x) - minY) * yScale
+        });
+      }
+      minimapCache = { key: cacheKey, time: now, terrain };
+    }
 
     ctx.save();
-    ctx.globalAlpha = 0.88;
-    ctx.strokeStyle = "rgb(244 244 236 / 0.58)";
-    ctx.lineWidth = 1.6;
+    ctx.globalAlpha = 0.9;
+    ctx.strokeStyle = "rgb(244 244 236 / 0.62)";
+    ctx.lineWidth = 3.6;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     ctx.beginPath();
-    for (let x = mapStart; x <= mapEnd; x += 3) {
-      const px = x0 + (x - mapStart) * xScale;
-      const py = y0 + mapH - (terrainHeight(x) - minY) * yScale;
-      if (x === mapStart) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
-    }
+    minimapCache.terrain.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    });
     ctx.stroke();
 
     if (guide.length > 1) {
-      ctx.strokeStyle = "rgb(255 232 137 / 0.72)";
-      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = "rgb(255 232 137 / 0.76)";
+      ctx.lineWidth = 2;
       ctx.setLineDash([2, 4]);
       ctx.beginPath();
       guide.forEach((g, i) => {
@@ -2053,10 +2158,16 @@
 
     const holeX = x0 + (COURSE.holeX - mapStart) * xScale;
     const holeY = y0 + mapH - (terrainHeight(COURSE.holeX) - minY) * yScale;
-    ctx.fillStyle = "rgb(36 58 45 / 0.9)";
+    ctx.shadowColor = "rgb(255 225 86 / 0.8)";
+    ctx.shadowBlur = LOW_POWER_RENDER ? 2 : 5;
+    ctx.fillStyle = "rgb(255 225 86 / 0.98)";
     ctx.beginPath();
-    ctx.arc(holeX, holeY, 3, 0, Math.PI * 2);
+    ctx.arc(holeX, holeY, 4.4, 0, Math.PI * 2);
     ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "rgb(36 58 45 / 0.75)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -2302,12 +2413,15 @@
     accumulator += dt;
     if (pointer) {
       strikeClock += dt;
-      predictGuide();
+      predictGuide(now);
     }
-    while (accumulator >= FIXED_DT) {
+    let physicsSteps = 0;
+    while (accumulator >= FIXED_DT && physicsSteps < MAX_PHYSICS_STEPS_PER_FRAME) {
       update(FIXED_DT);
       accumulator -= FIXED_DT;
+      physicsSteps += 1;
     }
+    if (physicsSteps >= MAX_PHYSICS_STEPS_PER_FRAME) accumulator = 0;
     draw(now / 1000);
     requestAnimationFrame(tick);
   }
@@ -2339,6 +2453,7 @@
       x: pos.x,
       y: pos.y
     };
+    invalidateGuideCache();
     canvas.setPointerCapture?.(event.pointerId);
     event.preventDefault();
   }
@@ -2359,6 +2474,8 @@
     else {
       pointer = null;
       shotPreview = null;
+      guide.length = 0;
+      invalidateGuideCache();
     }
     event.preventDefault();
   }
