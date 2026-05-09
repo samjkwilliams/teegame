@@ -1,0 +1,573 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #91b7c7;
+  color: #17201f;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  touch-action: none;
+  user-select: none;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+.brand-logo {
+  position: fixed;
+  z-index: 2;
+  top: max(52px, calc(env(safe-area-inset-top) + 44px));
+  left: 50%;
+  width: clamp(150px, 18vw, 250px);
+  height: auto;
+  transform: translateX(-50%);
+  opacity: 0.9;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 10px rgb(31 45 42 / 0.15));
+}
+
+.hole-nav {
+  position: fixed;
+  z-index: 3;
+  top: max(50px, calc(env(safe-area-inset-top) + 42px));
+  left: max(12px, env(safe-area-inset-left));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hole-nav button,
+.hole-count {
+  height: 32px;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: 999px;
+  background: rgb(17 30 36 / 0.26);
+  backdrop-filter: blur(10px);
+  color: rgb(255 255 255 / 0.92);
+}
+
+.hole-nav button {
+  width: 32px;
+  padding: 0;
+  font: 700 18px/1 ui-sans-serif, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.hole-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  padding: 0 10px;
+  font: 700 11px/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.game-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+body.phone .game-wrapper {
+  width: min(100vw, 54vh);
+  height: min(100vh, 185vw);
+}
+
+body.four-five .game-wrapper {
+  width: min(100vw, 80vh);
+  height: min(100vh, 125vw);
+}
+
+body.desktop .game-wrapper {
+  width: min(100vw, 178vh);
+  height: min(100vh, 56.25vw);
+}
+
+#sky,
+#game {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#sky {
+  z-index: 0;
+  background: #91b7c7;
+  pointer-events: none;
+}
+
+#game {
+  z-index: 1;
+  background: transparent;
+}
+
+body.phone #sky,
+body.phone #game {
+  width: min(100vw, 54vh);
+  height: min(100vh, 185vw);
+}
+
+body.four-five #sky,
+body.four-five #game {
+  width: min(100vw, 80vh);
+  height: min(100vh, 125vw);
+}
+
+body.desktop #sky,
+body.desktop #game {
+  width: min(100vw, 178vh);
+  height: min(100vh, 56.25vw);
+}
+
+.testing-tools {
+  position: fixed;
+  z-index: 3;
+  top: max(50px, calc(env(safe-area-inset-top) + 42px));
+  right: max(10px, env(safe-area-inset-right));
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgb(255 255 255 / 0.34);
+  border-radius: 8px;
+  background: rgb(24 37 35 / 0.24);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 620px) {
+  .brand-logo {
+    top: max(56px, calc(env(safe-area-inset-top) + 48px));
+    width: clamp(128px, 34vw, 190px);
+  }
+
+  .hole-nav {
+    gap: 6px;
+  }
+
+  .testing-tools {
+    transform: scale(0.82);
+    transform-origin: top right;
+  }
+}
+
+.testing-tools button {
+  min-width: 42px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: rgb(255 255 255 / 0.8);
+  font: 600 11px/1 ui-sans-serif, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.testing-tools button.active {
+  background: rgb(255 255 255 / 0.84);
+  color: #15201d;
+}
+
+.intro-overlay {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(10 20 30 / 0.8);
+  backdrop-filter: blur(12px);
+  display: grid;
+  place-items: center;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.intro-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.intro-panel {
+  background: #0f1e2e;
+  color: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-sizing: border-box;
+}
+
+.intro-logo {
+  width: 160px;
+  margin-bottom: 20px;
+}
+
+.intro-section {
+  margin-bottom: 20px;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  padding-top: 20px;
+}
+
+.intro-section h2 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgb(255 255 255 / 0.7);
+  margin: 0 0 10px;
+}
+
+.intro-section p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.9);
+  margin: 0;
+}
+
+.intro-section p strong {
+  color: #f0b95d;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.product-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 8px;
+}
+
+.product-item p {
+  font-size: 9px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.intro-button, .skip-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.intro-button {
+  background: #f0b95d;
+  color: #0f1e2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.skip-button:hover {
+  color: #fff;
+}
+
+/* ── Hole Advance Overlay ── */
+
+.hole-advance-overlay {
+  position: absolute;
+  z-index: 11;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(6 14 24 / 0.82);
+  backdrop-filter: blur(14px);
+  display: grid;
+  place-items: center;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.hole-advance-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hole-advance-panel {
+  background: #0f1e2e;
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px 24px 24px;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+.advance-logo {
+  width: 140px;
+  margin-bottom: 16px;
+  opacity: 0.92;
+}
+
+.advance-heading {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin: 0 0 6px;
+  background: linear-gradient(135deg, #f0d78c 0%, #f0b95d 40%, #e8a840 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.advance-hole-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgb(255 255 255 / 0.55);
+  margin: 0 0 20px;
+  text-transform: uppercase;
+}
+
+/* ── Particles ── */
+
+.advance-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #f0c060;
+  opacity: 0;
+  animation: particle-rise 3.5s ease-in-out infinite;
+}
+
+.particle:nth-child(1) { left: 15%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 35%; animation-delay: 0.7s; width: 2px; height: 2px; }
+.particle:nth-child(3) { left: 55%; animation-delay: 1.4s; }
+.particle:nth-child(4) { left: 72%; animation-delay: 2.1s; width: 2px; height: 2px; background: #e8c870; }
+.particle:nth-child(5) { left: 22%; animation-delay: 2.8s; width: 1.5px; height: 1.5px; background: #f0d090; }
+.particle:nth-child(6) { left: 48%; animation-delay: 0.35s; width: 2px; height: 2px; }
+.particle:nth-child(7) { left: 65%; animation-delay: 1.05s; width: 1.5px; height: 1.5px; background: #e8c870; }
+.particle:nth-child(8) { left: 82%; animation-delay: 2.45s; }
+
+@keyframes particle-rise {
+  0% { bottom: -10px; opacity: 0; transform: translateY(0) scale(1); }
+  15% { opacity: 0.7; }
+  60% { opacity: 0; }
+  100% { bottom: 105%; opacity: 0; transform: translateY(-20px) scale(0.3); }
+}
+
+/* ── Stats Grid ── */
+
+.advance-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(255 255 255 / 0.07);
+  border-radius: 12px;
+  padding: 12px 6px 10px;
+  text-align: center;
+}
+
+.stat-icon {
+  display: block;
+  font-size: 10px;
+  color: #f0c060;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.stat-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: rgb(255 255 255 / 0.95);
+  line-height: 1.2;
+}
+
+.stat-label {
+  display: block;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgb(255 255 255 / 0.4);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+/* ── Sections ── */
+
+.advance-section {
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+  padding-top: 18px;
+  margin-bottom: 20px;
+}
+
+.advance-section h2 {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgb(255 255 255 / 0.7);
+  margin: 0 0 8px;
+}
+
+.advance-section p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.85);
+  margin: 0;
+}
+
+.advance-section .product-item p {
+  font-size: 9px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.9);
+}
+
+.advance-section .product-item p strong {
+  color: #f0b95d;
+}
+
+.advance-unlocks-remaining {
+  font-size: 12px !important;
+  color: rgb(255 255 255 / 0.5) !important;
+  margin-top: 4px !important;
+}
+
+/* ── Progress Bar ── */
+
+.advance-progress {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 16px;
+  padding: 0 4px;
+}
+
+.progress-segment {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.08);
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.progress-segment.completed {
+  background: linear-gradient(90deg, #e8a840, #f0c060);
+  box-shadow: 0 0 8px rgb(240 185 93 / 0.25);
+}
+
+.progress-fraction {
+  margin-left: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgb(255 255 255 / 0.85);
+  white-space: nowrap;
+}
+
+/* ── Unlock Smash Animation ── */
+
+.product-grid-unlock .product-item {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.hole-advance-overlay.visible .product-grid-unlock .product-item {
+  animation: unlock-smash 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.hole-advance-overlay.visible .product-grid-unlock .product-item:nth-child(1) { animation-delay: 0.25s; }
+.hole-advance-overlay.visible .product-grid-unlock .product-item:nth-child(2) { animation-delay: 0.4s; }
+.hole-advance-overlay.visible .product-grid-unlock .product-item:nth-child(3) { animation-delay: 0.55s; }
+
+@keyframes unlock-smash {
+  0%   { opacity: 0; transform: scale(0.5) rotate(-4deg); }
+  50%  { opacity: 1; transform: scale(1.08) rotate(1.5deg); }
+  70%  { transform: scale(0.94) rotate(-0.5deg); }
+  85%  { transform: scale(1.02) rotate(0.3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* ── Summary (last hole) ── */
+
+.advance-summary {
+  display: none;
+}
+
+.advance-heading-champion {
+  font-size: 36px;
+  margin-bottom: 4px;
+}
+
+.advance-next-button { }
+.advance-shop-button { }
+
+/* ── Continue CTA ── */
+
+.advance-continue-button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f0b95d 0%, #e8a840 100%);
+  color: #0f1e2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.2s, transform 0.15s;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.advance-continue-button:hover {
+  background: linear-gradient(135deg, #f5c46e 0%, #eeb548 100%);
+}
+
+.advance-continue-button:active {
+  transform: scale(0.98);
+}
