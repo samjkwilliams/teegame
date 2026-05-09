@@ -129,7 +129,7 @@ body.desktop #game {
 .testing-tools {
   position: fixed;
   z-index: 3;
-  top: max(50px, calc(env(safe-area-inset-top) + 42px));
+  bottom: max(50px, calc(env(safe-area-inset-bottom) + 42px));
   right: max(10px, env(safe-area-inset-right));
   display: flex;
   gap: 4px;
@@ -152,7 +152,7 @@ body.desktop #game {
 
   .testing-tools {
     transform: scale(0.82);
-    transform-origin: top right;
+    transform-origin: bottom right;
   }
 }
 
