@@ -19,7 +19,7 @@ body {
 .brand-logo {
   position: fixed;
   z-index: 2;
-  top: max(52px, calc(env(safe-area-inset-top) + 44px));
+  bottom: max(52px, calc(env(safe-area-inset-bottom) + 44px));
   left: 50%;
   width: clamp(150px, 18vw, 250px);
   height: auto;
@@ -32,7 +32,7 @@ body {
 .hole-nav {
   position: fixed;
   z-index: 3;
-  top: max(50px, calc(env(safe-area-inset-top) + 42px));
+  bottom: max(50px, calc(env(safe-area-inset-bottom) + 42px));
   left: max(12px, env(safe-area-inset-left));
   display: flex;
   align-items: center;
@@ -142,7 +142,7 @@ body.desktop #game {
 
 @media (max-width: 620px) {
   .brand-logo {
-    top: max(56px, calc(env(safe-area-inset-top) + 48px));
+    bottom: max(56px, calc(env(safe-area-inset-bottom) + 48px));
     width: clamp(128px, 34vw, 190px);
   }
 
