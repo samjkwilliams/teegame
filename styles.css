@@ -19,7 +19,7 @@ body {
 .brand-logo {
   position: fixed;
   z-index: 2;
-  bottom: max(52px, calc(env(safe-area-inset-bottom) + 44px));
+  top: max(52px, calc(env(safe-area-inset-top) + 44px));
   left: 50%;
   width: clamp(150px, 18vw, 250px);
   height: auto;
@@ -142,7 +142,7 @@ body.desktop #game {
 
 @media (max-width: 620px) {
   .brand-logo {
-    bottom: max(56px, calc(env(safe-area-inset-bottom) + 48px));
+    top: max(56px, calc(env(safe-area-inset-top) + 48px));
     width: clamp(128px, 34vw, 190px);
   }
 
