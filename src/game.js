@@ -2476,7 +2476,19 @@ const HOLES = [
     gameStats = { totalStrokes: 0, totalTime: 0, bestScore: null, totalYards: 0, holesPlayed: 0 };
   }
 
+  let audioUnlocked = false;
+
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    Object.values(AUDIO).forEach(a => {
+      a.volume = 0;
+      a.play().then(() => { a.pause(); a.currentTime = 0; a.volume = 1; }).catch(() => {});
+    });
+  }
+
   function hideIntro() {
+    unlockAudio();
     introModal.classList.remove("visible");
   }
 
