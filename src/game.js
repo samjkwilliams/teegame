@@ -522,7 +522,8 @@ const HOLES = [
         angle: 0,
         slipping: false,
         grounded: true,
-        asleep: true
+        asleep: true,
+        bounceCount: 0
       },
       player: {
         x,
@@ -837,6 +838,7 @@ const HOLES = [
             b.slipping = preview.mode === "putt" ? false : true;
             b.grounded = preview.mode === "putt";
             b.asleep = false;
+            b.bounceCount = 0;
             world.launchOriginX = b.x;
             world.strokes += 1;
             spawnStrikeCaption(preview.power, preview.mode);
@@ -1181,6 +1183,14 @@ const HOLES = [
         // Add camera shake on bounce based on impact velocity
         if (impact > 5) {
           world.cameraShake = Math.max(world.cameraShake, clamp(impact / 15, 0.2, 1.2));
+        }
+
+        // Phone vibration — strong on first bounce, fading on later bounces
+        if (typeof navigator.vibrate === "function" && impact > 3) {
+          ball.bounceCount++;
+          const duration = Math.min(clamp(impact * 5, 8, 80), 80);
+          const fade = Math.max(1, 5 - ball.bounceCount);
+          navigator.vibrate(Math.round(duration / fade));
         }
       }
 
@@ -2361,6 +2371,20 @@ const HOLES = [
     const pos = pointerPosition(event);
     pointer.x = pos.x;
     pointer.y = pos.y;
+
+    if (typeof navigator.vibrate === "function") {
+      const rawX = pointer.startX - pointer.x;
+      const rawY = pointer.y - pointer.startY;
+      const pull = Math.hypot(rawX, rawY);
+      const maxPull = Math.min(canvasSize().width, canvasSize().height) * 0.32;
+      const power = clamp(pull / maxPull, 0, 1);
+      const now = performance.now();
+      if (power > 0.08 && (!pointer.lastHaptic || now - pointer.lastHaptic > 90)) {
+        pointer.lastHaptic = now;
+        navigator.vibrate(Math.round(5 + power * 18));
+      }
+    }
+
     event.preventDefault();
   }
 
